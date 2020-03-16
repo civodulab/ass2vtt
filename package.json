@@ -1,0 +1,28 @@
+{
+  "name": "ass2vtt",
+  "version": "1.1.0",
+  "description": "Transforme ass en WebVTT.",
+  "bin": {
+    "ass2vtt": "bin/ass2vtt.js"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": {
+    "name": "Ludovic BAL",
+    "email": "ludo.bal62@gmail.com"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "ass-compiler": "0.0.11",
+    "colors": "^1.4.0",
+    "optionator": "^0.8.3"
+  },
+  "keywords": [
+    "ass",
+    "subtitle",
+    "vtt",
+    "a11y"
+  ]
+}
