@@ -1,6 +1,6 @@
 {
   "name": "ass2vtt",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Transforme ass en WebVTT.",
   "bin": {
     "ass2vtt": "bin/ass2vtt.js"
