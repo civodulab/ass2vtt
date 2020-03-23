@@ -33,6 +33,9 @@ Basic:
   -h, --help     displays help
   -v, --version  Output the version number
 
+Options:
+  --init Creates the config file .srt2assrc - default: false
+
 Options file out:
   -a, --a11y     Output the a11y file
   -c, --classic  Output the classic file
@@ -42,7 +45,17 @@ Options file out:
 
 ## Configuration
 
-Si vous voulez paramétrer le fichier ass, créer le fichier `.ass2vttrc` dans le répertoire du fichier.
+Vous pouvez paramétrer `ass2vtt` pour générer un fichier `.vtt` qui correspond à vos attentes.
+
+### --init
+
+`ass2vtt --init` va créer / modifier le fichier `.ass2vttrc` dans le répertoire en cours. Il va se baser sur les fichiers `.ass` de ce répertoire et récupérer les styles de ces fichiers pour générer `styleToVtt`.
+
+Si le fichier `ass2vttrc` existe il n'ajoutera que les nouveaux styles non présent.
+
+### manuellement
+
+Créer le fichier `.ass2vttrc` dans le répertoire du fichier.
 
 Ce fichier sert à faire la correspondance :
 
@@ -51,23 +64,25 @@ Exemple `.ass2vttrc`
 ```json
 {
     "styleToVtt": {
-      "parle à l'écran":"pae",
-      "parle hors champ":"phc",
-      "Indication de bruit":"ib",
-      "Indication musicale":"im",
-      "commentaire":"com",
-      "langue étrangère":"le"
+      "styleAssFile1":"saf1",
+      "styleAssFile2":"saf2",
+      "styleAssFile3":"saf3",
+      "styleAssFile3":"saf4"
     },
      "styleOutClassic": [
-        "Indication de bruit",
-        "im"
+        "styleAssFile1",
+        "saf3"
     ],
-    "styleItalicClassic": ["com","langue étrangère"],
-    "integrerStyle": false
+    "styleItalicClassic": ["saf4","styleAssFile2"],
+    "integrerStyle": false,
+    "extensionA11Y": "_a11y",
+    "extensionClassic": "_classic"
 }
 ```
 
 - `integrerStyle` : ajoute les styles dans le fichier WebVTT
 - `styleOUTclassic` : les textes comportant ces styles sont retirés dans le mode classic
 - `styleItalicClassic` : les textes comportant ces styles seront en italique en mode classic
-
+- `extensionA11Y` et `extensionClassic` :
+  > Exemple  
+  > `nameAssFile.ass` => `nameAssFile_a11y.vtt` et  `nameAssFile_classic.vtt`

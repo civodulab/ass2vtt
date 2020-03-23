@@ -19,7 +19,16 @@ module.exports = optionator({
             alias: "v",
             type: "Boolean",
             description: "Output the version number"
+        },
+        {
+            heading: "Options"
         }, {
+            option: "init",
+            type: "Boolean",
+            default: "false",
+            description: "Creates the config file .srt2assrc"
+        },
+        {
             heading: "Options file out"
         }, {
             option: "a11y",

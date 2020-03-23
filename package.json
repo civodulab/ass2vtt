@@ -13,6 +13,7 @@
     "name": "Ludovic BAL",
     "email": "ludo.bal62@gmail.com"
   },
+  "homepage": "https://github.com/civodulab/ass2vtt",
   "license": "ISC",
   "dependencies": {
     "ass-compiler": "0.0.11",
