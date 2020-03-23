@@ -34,7 +34,7 @@ Basic:
   -v, --version  Output the version number
 
 Options:
-  --init Creates the config file .srt2assrc - default: false
+  --init Creates the config file .ass2vttrc - default: false
 
 Options file out:
   -a, --a11y     Output the a11y file
