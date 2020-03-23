@@ -84,5 +84,5 @@ Exemple `.ass2vttrc`
 - `styleOUTclassic` : les textes comportant ces styles sont retirés dans le mode classic
 - `styleItalicClassic` : les textes comportant ces styles seront en italique en mode classic
 - `extensionA11Y` et `extensionClassic` :
-  > Exemple  
+  > Exemple ici  
   > `nameAssFile.ass` => `nameAssFile_a11y.vtt` et  `nameAssFile_classic.vtt`

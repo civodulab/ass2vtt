@@ -26,7 +26,7 @@ module.exports = optionator({
             option: "init",
             type: "Boolean",
             default: "false",
-            description: "Creates the config file .srt2assrc"
+            description: "Creates the config file .ass2srtrc"
         },
         {
             heading: "Options file out"

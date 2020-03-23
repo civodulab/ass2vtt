@@ -166,6 +166,10 @@ module.exports = {
       items.forEach(f => {
         path.extname(f) === ".ass" && fichierAss.push(path.join(chemin, f));
       });
+       if (fichierAss.length === 0) {
+         monLog.error("Vous n'avez pas de fichiers ass dans votre répertoire");
+         return;
+       }
       fs.writeFileSync(rcPath, _writeInit(fichierAss), "utf8");
       monLog.log("ass2vtt", rcPath, "généré");
     });
