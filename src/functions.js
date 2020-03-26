@@ -170,7 +170,7 @@ module.exports = {
          monLog.error("Vous n'avez pas de fichiers ass dans votre répertoire");
          return;
        }
-      fs.writeFileSync(rcPath, _writeInit(fichierAss), "utf8");
+      fs.writeFileSync(rcPath, JSON.stringify(_writeInit(fichierAss),null,2), "utf8");
       monLog.log("ass2vtt", rcPath, "généré");
     });
   },
@@ -215,14 +215,16 @@ function _writeInit(ass) {
       !styleToVtt[s[0]] && (styleToVtt[s[0]] = s[0]);
     });
   });
-  // styles = styles.map(s => '"' + s + '": ' + '"' + s + '"');
-  txt.push('"styleToVtt": {\n' + styleToVtt.join(",\n") + "\n}");
-  txt.push('"styleOutClassic": [' + styleOutClassic.joinPlus(",") + "]");
-  txt.push('"styleItalicClassic": [' + styleItalicClassic.joinPlus(",") + "]");
-  txt.push('"integrerStyle": ' + integrerStyle);
-  txt.push('"extensionA11Y": "' + extensionA11Y + '"');
-  txt.push('"extensionClassic": "' + extensionClassic + '"');
-  return "{\n" + txt.join(",\n") + "\n}";
+ 
+return {
+  styleToVtt: styleToVtt,
+  styleOutClassic: styleOutClassic,
+  styleItalicClassic: styleItalicClassic,
+  integrerStyle: integrerStyle,
+  extensionA11Y: extensionA11Y,
+  extensionClassic: extensionClassic
+};
+
 }
 
 Object.prototype.join = function(joinCarac) {
