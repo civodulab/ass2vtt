@@ -9,6 +9,51 @@ let integrerStyle = false;
 let extensionA11Y = "_a11y";
 let extensionClassic = "_classic";
 
+const re_newline = /\\N/g; // replace \N with newline
+const re_newline_tiret = /\\N-/g;
+const re_accolade_tiret = /\}-/g;
+const re_softbreak = /\\n/g; // There's no equivalent function in WebVTT.
+const re_hardspace = /\\h/g; // Replace with &nbsp;
+
+// prototype
+Number.prototype.toVTTtime = function() {
+  let time = new Date("1995-12-17T00:00:00");
+  time.setMilliseconds(this * 1000);
+  let time_tab = [
+    time.getHours(),
+    time.getMinutes(),
+    time.getSeconds(),
+    time.getMilliseconds()
+  ].map((v, i) => {
+    if (i < 3) {
+      v = v < 10 ? "0" + v : v;
+    } else {
+      v = v === 0 ? "000" : v;
+      v = v < 100 && v > 10 ? "0" + v : v;
+    }
+    return v;
+  });
+  return `${time_tab[0]}:${time_tab[1]}:${time_tab[2]}.${time_tab[3]}`;
+};
+
+String.prototype.hexcolor = function() {
+  return (
+    "#" + this.substring(8, 10) + this.substring(6, 8) + this.substring(4, 6)
+  );
+};
+
+String.prototype.styleA11Y = function(style) {
+  return "<c." + style + ">" + this + "</c>";
+};
+
+String.prototype.italique = function() {
+  return "<i>" + this + "</i>";
+};
+
+String.prototype.nbLigne = function() {
+  return this.match(/[\n]/g).length + 1;
+};
+
 _options();
 
 function _options() {
@@ -30,26 +75,6 @@ function _options() {
       (srt_config.extensionClassic && srt_config.extensionClassic) ||
       extensionClassic;
   }
-}
-
-function _toVTTtime(secs) {
-  let time = new Date("1995-12-17T00:00:00");
-  time.setMilliseconds(secs * 1000);
-  let time_tab = [
-    time.getHours(),
-    time.getMinutes(),
-    time.getSeconds(),
-    time.getMilliseconds()
-  ].map((v, i) => {
-    if (i < 3) {
-      v = v < 10 ? "0" + v : v;
-    } else {
-      v = v === 0 ? "000" : v;
-      v = v < 100 && v > 10 ? "0" + v : v;
-    }
-    return v;
-  });
-  return `${time_tab[0]}:${time_tab[1]}:${time_tab[2]}.${time_tab[3]}`;
 }
 
 function _position(tc, tags, TV, multiline = false) {
@@ -92,7 +117,7 @@ function _ecritureStyle(parse) {
       style.push("STYLE");
       style.push("::cue(." + s[0] + "){");
       style.push("font-size: " + s[2] + ";");
-      style.push("color: " + _hexcolor(s[3]) + ";");
+      style.push("color: " + s[3].hexcolor() + ";");
       style.push("}");
       style.push("");
     });
@@ -100,10 +125,16 @@ function _ecritureStyle(parse) {
   return style;
 }
 
-function _hexcolor(color) {
-  return (
-    "#" + color.substring(8, 10) + color.substring(6, 8) + color.substring(4, 6)
-  );
+function _quadratins(txt) {
+  txt = (txt.substring(0, 1) === "-" && txt.replace(/-/, "–")) || txt;
+  txt = txt.replace(re_newline_tiret, "\r\n–").replace(re_accolade_tiret, "}–");
+
+  txt = txt
+    .replace(re_newline, "\r\n")
+    .replace(re_softbreak, " ")
+    .replace(re_hardspace, "&nbsp;");
+  txt = txt.replace(/\\N/g, "\n");
+  return txt;
 }
 
 module.exports = {
@@ -111,6 +142,8 @@ module.exports = {
   extensionClassic: extensionClassic,
   writeFile: function(parse) {
     _options();
+    let erreurLigneClassic = [];
+
     const TV = {
       width: parse.info.PlayResX,
       height: parse.info.PlayResY
@@ -119,39 +152,81 @@ module.exports = {
     let k = 0;
     let file_classic = ["WebVTT\n"].concat(styles),
       file_a11y = ["WebVTT\n"].concat(styles);
-    //classic
+    let style_avant = "";
+    let d_style_avant = "";
+    let end_avant = "";
     parse.events.dialogue.forEach((d, i) => {
       let Style = (styleToVtt[d.Style] && styleToVtt[d.Style]) || d.Style;
       let actor = d.Name && "<v " + d.Name + ">";
-      let tc = _toVTTtime(d.Start) + " --> " + _toVTTtime(d.End);
+      let start = d.Start.toVTTtime();
+      let end = d.End.toVTTtime();
+      let tc = start + " --> " + end;
+
       let multiline = d.Text.parsed[0].text.indexOf("\\N") > -1;
-      let txt = d.Text.parsed[0].text.replace(/\\N/g, "\n");
+      let txt = _quadratins(d.Text.parsed[0].text);
+
       if (
         styleOutClassic.indexOf(d.Style) === -1 &&
         styleOutClassic.indexOf(Style) === -1
       ) {
+        // txt = txt.replace(/\*/g, "");
+        // txt = (txt.substring(0, 1) === "–") && txt.replace(/–/, "") || txt;
         txt =
           (styleItalicClassic &&
             (styleItalicClassic.indexOf(d.Style) !== -1 ||
               styleItalicClassic.indexOf(Style) !== -1) &&
-            "<i>" + txt + "</i>") ||
+            txt.italique()) ||
           txt;
-        file_classic.push(i + 1 - k);
-        file_classic.push(tc);
-        file_classic.push(txt);
-        file_classic.push("");
+        // si texte superposé
+        if (
+          d.Start < end_avant &&
+          styleOutClassic.indexOf(Style) === -1 &&
+          styleOutClassic.indexOf(d.Style) === -1
+        ) {
+          let lf = file_classic.length;
+          let index_tc = lf - 3;
+          let index_txt = lf - 2;
+          let tc_classique =
+            file_classic[index_tc].split(" --> ")[0] + " --> " + end;
+          let txt_avant = file_classic[index_txt] + "\n" + txt;
+          file_classic.splice(index_tc, 1, tc_classique);
+          file_classic.splice(index_txt, 1, txt_avant);
+          if (txt_avant.nbLigne() > 2) {
+            if (
+              erreurLigneClassic
+                .map(x => x["sous-titre"])
+                .indexOf(file_classic[lf - 4])!==-1
+            ) {
+              erreurLigneClassic.pop();
+            }
+            erreurLigneClassic.push({
+              "sous-titre": file_classic[lf - 4],
+              problème: "Trop de ligne (" + txt_avant.nbLigne() + ")"
+            });
+          }
+          k += 1;
+        } else {
+          file_classic.push(i + 1 - k);
+          file_classic.push(tc);
+          file_classic.push(txt);
+          file_classic.push("");
+        }
+        end_avant = d.End;
+        style_avant = Style;
+        d_style_avant = d.Style;
       } else {
         k += 1;
       }
       file_a11y.push(i + 1);
       file_a11y.push(_position(tc, d.Text.parsed[0].tags, TV, multiline));
-      file_a11y.push(actor + "<c." + Style + ">" + txt + "</c>");
+      file_a11y.push(actor + txt.styleA11Y(Style));
       file_a11y.push("");
     });
 
     return {
-      file_classic: file_classic.join("\n"),
-      file_a11y: file_a11y.join("\n")
+      _classic: file_classic.join("\n"),
+      _a11y: file_a11y.join("\n"),
+      erreurLigneClassic: erreurLigneClassic
     };
   },
   init: function() {
@@ -166,11 +241,15 @@ module.exports = {
       items.forEach(f => {
         path.extname(f) === ".ass" && fichierAss.push(path.join(chemin, f));
       });
-       if (fichierAss.length === 0) {
-         monLog.error("Vous n'avez pas de fichiers ass dans votre répertoire");
-         return;
-       }
-      fs.writeFileSync(rcPath, JSON.stringify(_writeInit(fichierAss),null,2), "utf8");
+      if (fichierAss.length === 0) {
+        monLog.error("Vous n'avez pas de fichiers ass dans votre répertoire");
+        return;
+      }
+      fs.writeFileSync(
+        rcPath,
+        JSON.stringify(_writeInit(fichierAss), null, 2),
+        "utf8"
+      );
       monLog.log("ass2vtt", rcPath, "généré");
     });
   },
@@ -206,8 +285,6 @@ module.exports = {
 };
 
 function _writeInit(ass) {
-  // let styles = [];
-  let txt = [];
   ass.forEach(f => {
     const data = fs.readFileSync(f, "utf8");
     const parse = parseASS(data);
@@ -215,30 +292,13 @@ function _writeInit(ass) {
       !styleToVtt[s[0]] && (styleToVtt[s[0]] = s[0]);
     });
   });
- 
-return {
-  styleToVtt: styleToVtt,
-  styleOutClassic: styleOutClassic,
-  styleItalicClassic: styleItalicClassic,
-  integrerStyle: integrerStyle,
-  extensionA11Y: extensionA11Y,
-  extensionClassic: extensionClassic
-};
 
+  return {
+    styleToVtt: styleToVtt,
+    styleOutClassic: styleOutClassic,
+    styleItalicClassic: styleItalicClassic,
+    integrerStyle: integrerStyle,
+    extensionA11Y: extensionA11Y,
+    extensionClassic: extensionClassic
+  };
 }
-
-Object.prototype.join = function(joinCarac) {
-  let tab = [];
-  Object.keys(this).forEach(k => {
-    tab.push('"' + k + '" : "' + this[k] + '"');
-  });
-  return tab.join(joinCarac);
-};
-Array.prototype.joinPlus = function(joinCarac) {
-  return this.map(x => '"' + x + '"').join(joinCarac);
-};
-
-// let styleOutClassic = [];
-// let styleItalicClassic = [];
-// let styleToVtt = {};
-// let integrerStyle = false;

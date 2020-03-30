@@ -73,32 +73,30 @@ function writeFiles(options, file_in) {
         f.split(".")[0] + mesFunctions.extensionClassic + ".vtt",
       file_out_a11y: f.split(".")[0] + mesFunctions.extensionA11Y + ".vtt"
     };
+    const file_out=mesFunctions.writeFile(parse);
     if (options.both || (!options.classic && !options.a11y)) {
       // classique
-      fs.writeFileSync(
-        argv.file_out_classic,
-        mesFunctions.writeFile(parse).file_classic
-      );
+      // mesFunctions.erreurLigneClassic = [];
+
+      fs.writeFileSync(argv.file_out_classic, file_out._classic);
       monLog.log("ass2vtt", argv.file_out_classic, "généré");
+      if (file_out.erreurLigneClassic.length > 0) {
+        monLog.error(
+          "Problème dans le fichier " + mesFunctions.extensionClassic
+        );
+        console.table(file_out.erreurLigneClassic);
+      }
       // accessible
-      fs.writeFileSync(
-        argv.file_out_a11y,
-        mesFunctions.writeFile(parse).file_a11y
-      );
+      fs.writeFileSync(argv.file_out_a11y, file_out._a11y);
       monLog.log("ass2vtt", argv.file_out_a11y, "généré");
     } else if (options.a11y) {
       // accessible
-      fs.writeFileSync(
-        argv.file_out_a11y,
-        mesFunctions.writeFile(parse).file_a11y
-      );
+      fs.writeFileSync(argv.file_out_a11y, file_out._a11y);
       monLog.log("ass2vtt", argv.file_out_a11y, "généré");
     } else if (options.classic) {
       // classique
-      fs.writeFileSync(
-        argv.file_out_classic,
-        mesFunctions.writeFile(parse).file_classic
-      );
+      
+      fs.writeFileSync(argv.file_out_classic, file_out._classic);
       monLog.log("ass2vtt", argv.file_out_classic, "généré");
     }
   });

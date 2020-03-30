@@ -1,5 +1,8 @@
 # ass2vtt
 
+![npm](https://img.shields.io/npm/v/ass2vtt)
+![npm](https://img.shields.io/npm/dt/ass2vtt)
+
 ass2vtt est un outil permettant de transformer un document ass (Advanced Sub Station) en WebVTT (Web Video Text Tracks).
 
 ## Installation and Usage
@@ -51,7 +54,7 @@ Vous pouvez paramétrer `ass2vtt` pour générer un fichier `.vtt` qui correspon
 
 `ass2vtt --init` va créer / modifier le fichier `.ass2vttrc` dans le répertoire en cours. Il va se baser sur les fichiers `.ass` de ce répertoire et récupérer les styles de ces fichiers pour générer `styleToVtt`.
 
-Si le fichier `ass2vttrc` existe il n'ajoutera que les nouveaux styles non présent.
+Si le fichier `ass2vttrc` existe il n'ajoutera que les nouveaux styles non présents.
 
 ### manuellement
 
