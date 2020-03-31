@@ -76,8 +76,6 @@ function writeFiles(options, file_in) {
     const file_out=mesFunctions.writeFile(parse);
     if (options.both || (!options.classic && !options.a11y)) {
       // classique
-      // mesFunctions.erreurLigneClassic = [];
-
       fs.writeFileSync(argv.file_out_classic, file_out._classic);
       monLog.log("ass2vtt", argv.file_out_classic, "généré");
       if (file_out.erreurLigneClassic.length > 0) {

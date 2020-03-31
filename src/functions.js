@@ -192,10 +192,15 @@ module.exports = {
           file_classic.splice(index_tc, 1, tc_classique);
           file_classic.splice(index_txt, 1, txt_avant);
           if (txt_avant.nbLigne() > 2) {
+            console.log(
+              erreurLigneClassic.findIndex(
+                x => x["sous-titre"] === file_classic[lf - 4]
+              )
+            );
             if (
-              erreurLigneClassic
-                .map(x => x["sous-titre"])
-                .indexOf(file_classic[lf - 4])!==-1
+              erreurLigneClassic.findIndex(
+                x => x["sous-titre"] === file_classic[lf - 4]
+              )!==-1
             ) {
               erreurLigneClassic.pop();
             }
