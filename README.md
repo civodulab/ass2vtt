@@ -56,7 +56,7 @@ Vous pouvez paramétrer `ass2vtt` pour générer un fichier `.vtt` qui correspon
 
 Si le fichier `ass2vttrc` existe il n'ajoutera que les nouveaux styles non présents.
 
-### manuellement
+### Manuellement
 
 Créer le fichier `.ass2vttrc` dans le répertoire du fichier.
 

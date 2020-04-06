@@ -150,8 +150,8 @@ module.exports = {
     };
     let styles = _ecritureStyle(parse);
     let k = 0;
-    let file_classic = ["WebVTT\n"].concat(styles),
-      file_a11y = ["WebVTT\n"].concat(styles);
+    let file_classic = ["WEBVTT\n"].concat(styles),
+      file_a11y = ["WEBVTT\n"].concat(styles);
     let style_avant = "";
     let d_style_avant = "";
     let end_avant = "";

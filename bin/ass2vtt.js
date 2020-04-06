@@ -67,6 +67,7 @@ function writeFiles(options, file_in) {
   file_in.forEach(f => {
     const data = fs.readFileSync(f, "utf8");
     const parse = parseASS(data);
+    
     const argv = {
       file_in: f,
       file_out_classic:
