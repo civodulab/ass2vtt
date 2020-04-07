@@ -171,12 +171,7 @@ module.exports = {
       ) {
         // txt = txt.replace(/\*/g, "");
         // txt = (txt.substring(0, 1) === "–") && txt.replace(/–/, "") || txt;
-        txt =
-          (styleItalicClassic &&
-            (styleItalicClassic.indexOf(d.Style) !== -1 ||
-              styleItalicClassic.indexOf(Style) !== -1) &&
-            txt.italique()) ||
-          txt;
+      
         // si texte superposé
         if (
           d.Start < end_avant &&
@@ -211,9 +206,15 @@ module.exports = {
           }
           k += 1;
         } else {
+           let txt_clas =
+              (styleItalicClassic &&
+                (styleItalicClassic.indexOf(d.Style) !== -1 ||
+                  styleItalicClassic.indexOf(Style) !== -1) &&
+                txt.italique()) ||
+              txt;
           file_classic.push(i + 1 - k);
           file_classic.push(tc);
-          file_classic.push(txt);
+          file_classic.push(txt_clas);
           file_classic.push("");
         }
         end_avant = d.End;
