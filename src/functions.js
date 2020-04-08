@@ -15,6 +15,7 @@ const re_accolade_tiret = /\}-/g;
 const re_softbreak = /\\n/g; // There's no equivalent function in WebVTT.
 const re_hardspace = /\\h/g; // Replace with &nbsp;
 
+
 // prototype
 Number.prototype.toVTTtime = function() {
   let time = new Date("1995-12-17T00:00:00");
@@ -29,7 +30,7 @@ Number.prototype.toVTTtime = function() {
       v = v < 10 ? "0" + v : v;
     } else {
       v = v === 0 ? "000" : v;
-      v = v < 100 && v > 10 ? "0" + v : v;
+      v = v < 100 && v >= 10 ? "0" + v : v;
     }
     return v;
   });
