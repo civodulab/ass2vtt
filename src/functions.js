@@ -137,6 +137,10 @@ function _quadratins(txt) {
   txt = txt.replace(/\\N/g, "\n");
   return txt;
 }
+function _Ita(txt){
+  return txt.replace(/{\\i1}/g, "<i>").replace(/{\\i0}/g, "</i>");
+}
+
 
 module.exports = {
   extensionA11Y: extensionA11Y,
@@ -164,7 +168,8 @@ module.exports = {
       let tc = start + " --> " + end;
 
       let multiline = d.Text.parsed[0].text.indexOf("\\N") > -1;
-      let txt = _quadratins(d.Text.parsed[0].text);
+      let txt = _quadratins(d.Text.raw);
+      txt=_Ita(txt);
 
       if (
         styleOutClassic.indexOf(d.Style) === -1 &&
