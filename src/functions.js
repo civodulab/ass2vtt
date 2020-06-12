@@ -170,6 +170,7 @@ module.exports = {
       let tc = start + " --> " + end;
 
       let multiline = d.Text.parsed[0].text.indexOf("\\N") > -1;
+      let TCposition = _position(tc, d.Text.parsed[0].tags, TV, multiline);
       let txt = _quadratins(d.Text.raw);
       txt = _Ita(txt);
       txt = _accoladePos(txt);
@@ -178,8 +179,6 @@ module.exports = {
         styleOutClassic.indexOf(d.Style) === -1 &&
         styleOutClassic.indexOf(Style) === -1
       ) {
-        // txt = txt.replace(/\*/g, "");
-        // txt = (txt.substring(0, 1) === "–") && txt.replace(/–/, "") || txt;
 
         // si texte superposé
         if (
@@ -221,7 +220,7 @@ module.exports = {
               txt.italique()) ||
             txt;
           file_classic.push(i + 1 - k);
-          file_classic.push(tc);
+          file_classic.push(TCposition);
           file_classic.push(txt_clas);
           file_classic.push("");
         }
@@ -232,7 +231,7 @@ module.exports = {
         k += 1;
       }
       file_a11y.push(i + 1);
-      file_a11y.push(_position(tc, d.Text.parsed[0].tags, TV, multiline));
+      file_a11y.push(TCposition);
       file_a11y.push(actor + txt.styleA11Y(Style));
       file_a11y.push("");
     });
