@@ -23,7 +23,7 @@ Number.prototype.toVTTtime = function () {
     time.getHours(),
     time.getMinutes(),
     time.getSeconds(),
-    time.getMilliseconds()
+    time.getMilliseconds(),
   ].map((v, i) => {
     if (i < 3) {
       v = v < 10 ? "0" + v : v;
@@ -66,11 +66,11 @@ function _options() {
     styleToVtt = (srt_config.styleToVtt && srt_config.styleToVtt) || styleToVtt;
     integrerStyle =
       (srt_config.integrerStyle && srt_config.integrerStyle) || integrerStyle;
-      if (srt_config.extensionA11Y === "") {
+    if (srt_config.extensionA11Y === "") {
       extensionA11Y = "";
     } else {
-     extensionA11Y =
-       (srt_config.extensionA11Y && srt_config.extensionA11Y) || extensionA11Y;
+      extensionA11Y =
+        (srt_config.extensionA11Y && srt_config.extensionA11Y) || extensionA11Y;
     }
 
     extensionClassic =
@@ -164,7 +164,7 @@ module.exports = {
     let end_avant = "";
     parse.events.dialogue.forEach((d, i) => {
       let Style = (styleToVtt[d.Style] && styleToVtt[d.Style]) || d.Style;
-      let actor = d.Name && "<v " + d.Name + ">";
+      let actor = (d.Name && "<v " + d.Name + ">") || "";
       d.Start = Math.round(d.Start * 100) / 100;
       d.End = Math.round(d.End * 100) / 100;
       let start = d.Start.toVTTtime();
@@ -181,7 +181,6 @@ module.exports = {
         styleOutClassic.indexOf(d.Style) === -1 &&
         styleOutClassic.indexOf(Style) === -1
       ) {
-
         // si texte superposé
         if (
           d.Start < end_avant &&
