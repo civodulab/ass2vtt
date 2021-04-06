@@ -56,25 +56,27 @@ _options();
 
 function _options() {
   if (fs.existsSync("./.ass2vttrc")) {
-    let srt_config = fs.readFileSync("./.ass2vttrc", "utf8");
-    srt_config = srt_config && JSON.parse(srt_config);
+    let ass_config = fs.readFileSync("./.ass2vttrc", "utf8");
+    ass_config = ass_config && JSON.parse(ass_config);
     styleOutClassic =
-      (srt_config.styleOutClassic && srt_config.styleOutClassic) || styleOutClassic;
+      (ass_config.styleOutClassic && ass_config.styleOutClassic) || styleOutClassic;
     styleItalicClassic =
-      (srt_config.styleItalicClassic && srt_config.styleItalicClassic) ||
+      (ass_config.styleItalicClassic && ass_config.styleItalicClassic) ||
       styleItalicClassic;
-    styleToVtt = (srt_config.styleToVtt && srt_config.styleToVtt) || styleToVtt;
+    styleToVtt = (ass_config.styleToVtt && ass_config.styleToVtt) || styleToVtt;
     integrerStyle =
-      (srt_config.integrerStyle && srt_config.integrerStyle) || integrerStyle;
-    if (srt_config.extensionA11Y === "") {
+      (ass_config.integrerStyle && ass_config.integrerStyle) || integrerStyle;
+    if (ass_config.extensionA11Y && ass_config.extensionA11Y === "") {
       extensionA11Y = "";
     } else {
       extensionA11Y =
-        (srt_config.extensionA11Y && srt_config.extensionA11Y) || extensionA11Y;
+        (ass_config.extensionA11Y && ass_config.extensionA11Y) || extensionA11Y;
     }
-
-    extensionClassic =
-      (srt_config.extensionClassic && srt_config.extensionClassic) || extensionClassic;
+    if (ass_config.extensionClassic && ass_config.extensionClassic === "") {
+      extensionClassic = "";
+    } else
+      extensionClassic =
+        (ass_config.extensionClassic && ass_config.extensionClassic) || extensionClassic;
   }
 }
 
