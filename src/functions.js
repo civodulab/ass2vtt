@@ -66,13 +66,13 @@ function _options() {
     styleToVtt = (ass_config.styleToVtt && ass_config.styleToVtt) || styleToVtt;
     integrerStyle =
       (ass_config.integrerStyle && ass_config.integrerStyle) || integrerStyle;
-    if (ass_config.extensionA11Y && ass_config.extensionA11Y === "") {
+      if (ass_config.extensionA11Y === "") {
       extensionA11Y = "";
     } else {
       extensionA11Y =
         (ass_config.extensionA11Y && ass_config.extensionA11Y) || extensionA11Y;
     }
-    if (ass_config.extensionClassic && ass_config.extensionClassic === "") {
+    if (ass_config.extensionClassic === "") {
       extensionClassic = "";
     } else
       extensionClassic =
@@ -150,7 +150,7 @@ module.exports = {
   extensionA11Y: extensionA11Y,
   extensionClassic: extensionClassic,
   writeFile: function (parse) {
-    _options();
+    // _options();
     let erreurLigneClassic = [];
 
     const TV = {
