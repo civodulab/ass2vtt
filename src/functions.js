@@ -82,47 +82,50 @@ function _options() {
 
 function _position(tc, tags, TV, multiline = false) {
   // si an
-  let an = tags[0] && tags[0].an;
-  let pos = tags[0] && tags[0].pos;
+ 
   let pos_style = [tc];
+  tags.forEach(t=>{
+    
+     if (t.an) {
+       let an=t.an;
+       if (Math.floor((an - 1) / 3) == 1) {
+         pos_style.push("line:50%");
+       } else if (Math.floor((an - 1) / 3) == 2) {
+         pos_style.push("line:0");
+       }
+       if (an % 3 == 1) {
+         pos_style.push("align:start");
+       } else if (an % 3 == 0) {
+         pos_style.push("align:end");
+       }
+     }
+     if (t.pos) {
+       let pos=t.pos;
+       const posX = pos[0],
+         posY = pos[1];
+       let left = Math.round((posX / TV.width) * 100) + "%";
+       let top = Math.round((posY / TV.height) * 100) + "%";
+       if (multiline) {
+         top = Math.round((posY / TV.height) * 100 - 5) + "%";
+       }
+       pos_style.push("position:" + left);
+       pos_style.push("line:" + top);
+     }
+  })
+ 
 
-  if (an) {
-    if (Math.floor((an - 1) / 3) == 1) {
-      pos_style.push("line:50%");
-    } else if (Math.floor((an - 1) / 3) == 2) {
-      pos_style.push("line:0");
-    }
-    if (an % 3 == 1) {
-      pos_style.push("align:start");
-    } else if (an % 3 == 0) {
-      pos_style.push("align:end");
-    }
-  }
-  if (pos) {
-    const posX = pos[0],
-      posY = pos[1];
-    let left = Math.round((posX / TV.width) * 100) + "%";
-    let top = Math.round((posY / TV.height) * 100) + "%";
-    if (multiline) {
-      top = Math.round((posY / TV.height) * 100 - 5) + "%";
-    }
-    pos_style.push("position:" + left);
-    pos_style.push("line:" + top);
-  }
   return pos_style.join(" ");
 }
 
 function _ecritureStyle(parse) {
-  let style = [];
+  let style = ["STYLE"];
   if (integrerStyle) {
     parse.styles.style.forEach((s) => {
       s[0] = (styleToVtt[s[0]] && styleToVtt[s[0]]) || s[0];
-      style.push("STYLE");
       style.push("::cue(." + s[0] + "){");
-      style.push("font-size: " + s[2] + ";");
+      // style.push("font-size: " + s[2] + ";");
       style.push("color: " + s[3].hexcolor() + ";");
       style.push("}");
-      style.push("");
     });
   }
   return style;
