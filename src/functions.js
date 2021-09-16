@@ -119,7 +119,6 @@ function _position(tc, tags, TV, multiline = false) {
 
 function _ecritureStyle(parse) {
   let style = ["STYLE"];
-  if (integrerStyle) {
     parse.styles.style.forEach((s) => {
       s[0] = (styleToVtt[s[0]] && styleToVtt[s[0]]) || s[0];
       style.push("::cue(." + s[0] + "){");
@@ -127,7 +126,7 @@ function _ecritureStyle(parse) {
       style.push("color: " + s[3].hexcolor() + ";");
       style.push("}");
     });
-  }
+    style.push("");
   return style;
 }
 
@@ -160,10 +159,15 @@ module.exports = {
       width: parse.info.PlayResX,
       height: parse.info.PlayResY,
     };
-    let styles = _ecritureStyle(parse);
+   
+    
     let k = 0;
-    let file_classic = ["WEBVTT\n"].concat(styles),
-      file_a11y = ["WEBVTT\n"].concat(styles);
+    let file_classic = ["WEBVTT\n"],
+      file_a11y = ["WEBVTT\n"];
+      if (integrerStyle) {
+         let styles = _ecritureStyle(parse);
+        file_a11y = file_a11y.concat(styles);
+      }
     let style_avant = "";
     let d_style_avant = "";
     let end_avant = "";
