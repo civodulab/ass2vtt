@@ -70,8 +70,8 @@ function writeFiles(options, file_in) {
     const argv = {
       file_in: f,
       file_out_classic:
-        f.split(".")[0] + mesFunctions.extensionClassic + ".vtt",
-      file_out_a11y: f.split(".")[0] + mesFunctions.extensionA11Y + ".vtt"
+       path.join(path.dirname(f),path.basename(f).split(".")[0] + mesFunctions.extensionClassic + ".vtt"),
+      file_out_a11y: path.join(path.dirname(f),path.basename(f).split(".")[0] + mesFunctions.extensionA11Y + ".vtt")
     };
     const file_out=mesFunctions.writeFile(parse);
     if (options.both || (!options.classic && !options.a11y)) {
