@@ -3,12 +3,13 @@ const fs = require("fs");
 const path = require("path");
 const parseASS = require("ass-compiler").parse;
 let styleOutClassic = [];
+let styleOutVtt = [];
 let styleItalicClassic = [];
 let styleToVtt = {};
 let integrerStyle = false;
 let extensionA11Y = "_a11y";
 let extensionClassic = "_classic";
-
+let nbOutVtt=0;
 const re_newline = /\\N/g; // replace \N with newline
 const re_newline_tiret = /\\N-/g;
 const re_accolade_tiret = /\}-/g;
@@ -60,6 +61,8 @@ function _options() {
     ass_config = ass_config && JSON.parse(ass_config);
     styleOutClassic =
       (ass_config.styleOutClassic && ass_config.styleOutClassic) || styleOutClassic;
+    styleOutVtt =
+      (ass_config.styleOutVtt && ass_config.styleOutVtt) || styleOutVtt;
     styleItalicClassic =
       (ass_config.styleItalicClassic && ass_config.styleItalicClassic) ||
       styleItalicClassic;
@@ -168,8 +171,6 @@ module.exports = {
          let styles = _ecritureStyle(parse);
         file_a11y = file_a11y.concat(styles);
       }
-    let style_avant = "";
-    let d_style_avant = "";
     let end_avant = "";
     parse.events.dialogue.forEach((d, i) => {
       let Style = (styleToVtt[d.Style] && styleToVtt[d.Style]) || d.Style;
@@ -179,13 +180,15 @@ module.exports = {
       let start = d.Start.toVTTtime();
       let end = d.End.toVTTtime();
       let tc = start + " --> " + end;
-
       let multiline = d.Text.parsed[0].text.indexOf("\\N") > -1;
       let TCposition = _position(tc, d.Text.parsed[0].tags, TV, multiline);
       let txt = _quadratins(d.Text.raw);
       txt = _Ita(txt);
       txt = _accoladePos(txt);
-
+      if(styleOutVtt.indexOf(d.Style) !== -1 ||
+        styleOutVtt.indexOf(Style) !== -1){
+          nbOutVtt++;
+        }
       if (
         styleOutClassic.indexOf(d.Style) === -1 &&
         styleOutClassic.indexOf(Style) === -1
@@ -240,10 +243,12 @@ module.exports = {
       } else {
         k += 1;
       }
-      file_a11y.push(i + 1);
+      if(  styleOutVtt.indexOf(d.Style) === -1 &&
+        styleOutVtt.indexOf(Style) === -1){
+      file_a11y.push(i + 1-nbOutVtt);
       file_a11y.push(TCposition);
       file_a11y.push(actor + txt.styleA11Y(Style));
-      file_a11y.push("");
+      file_a11y.push("");}
     });
 
     return {

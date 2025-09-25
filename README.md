@@ -76,6 +76,10 @@ Exemple `.ass2vttrc`
         "styleAssFile1",
         "saf3"
     ],
+     "styleOutVtt": [
+        "styleAssFile4",
+        "saf2"
+    ],
     "styleItalicClassic": ["saf4","styleAssFile2"],
     "integrerStyle": false,
     "extensionA11Y": "_a11y",
@@ -84,7 +88,8 @@ Exemple `.ass2vttrc`
 ```
 
 - `integrerStyle` : ajoute les styles dans le fichier WebVTT
-- `styleOUTclassic` : les textes comportant ces styles sont retirés dans le mode classic
+- `styleOutClassic` : les textes comportant ces styles sont retirés dans le mode classic
+- `styleOutVtt` : les textes comportant ces styles sont retirés dans le mode a11y
 - `styleItalicClassic` : les textes comportant ces styles seront en italique en mode classic
 - `extensionA11Y` et `extensionClassic` :
   > Exemple ici  
