@@ -9,12 +9,12 @@ let styleToVtt = {};
 let integrerStyle = false;
 let extensionA11Y = "_a11y";
 let extensionClassic = "_classic";
-let nbOutVtt=0;
 const re_newline = /\\N/g; // replace \N with newline
 const re_newline_tiret = /\\N-/g;
 const re_accolade_tiret = /\}-/g;
 const re_softbreak = /\\n/g; // There's no equivalent function in WebVTT.
 const re_hardspace = /\\h/g; // Replace with &nbsp;
+console.log('test');
 
 // prototype
 Number.prototype.toVTTtime = function () {
@@ -69,7 +69,7 @@ function _options() {
     styleToVtt = (ass_config.styleToVtt && ass_config.styleToVtt) || styleToVtt;
     integrerStyle =
       (ass_config.integrerStyle && ass_config.integrerStyle) || integrerStyle;
-      if (ass_config.extensionA11Y === "") {
+    if (ass_config.extensionA11Y === "") {
       extensionA11Y = "";
     } else {
       extensionA11Y =
@@ -85,51 +85,51 @@ function _options() {
 
 function _position(tc, tags, TV, multiline = false) {
   // si an
- 
+
   let pos_style = [tc];
-  tags.forEach(t=>{
-    
-     if (t.an) {
-       let an=t.an;
-       if (Math.floor((an - 1) / 3) == 1) {
-         pos_style.push("line:50%");
-       } else if (Math.floor((an - 1) / 3) == 2) {
-         pos_style.push("line:0");
-       }
-       if (an % 3 == 1) {
-         pos_style.push("align:start");
-       } else if (an % 3 == 0) {
-         pos_style.push("align:end");
-       }
-     }
-     if (t.pos) {
-       let pos=t.pos;
-       const posX = pos[0],
-         posY = pos[1];
-       let left = Math.round((posX / TV.width) * 100) + "%";
-       let top = Math.round((posY / TV.height) * 100) + "%";
-       if (multiline) {
-         top = Math.round((posY / TV.height) * 100 - 5) + "%";
-       }
-       pos_style.push("position:" + left);
-       pos_style.push("line:" + top);
-     }
+  tags.forEach(t => {
+
+    if (t.an) {
+      let an = t.an;
+      if (Math.floor((an - 1) / 3) == 1) {
+        pos_style.push("line:50%");
+      } else if (Math.floor((an - 1) / 3) == 2) {
+        pos_style.push("line:0");
+      }
+      if (an % 3 == 1) {
+        pos_style.push("align:start");
+      } else if (an % 3 == 0) {
+        pos_style.push("align:end");
+      }
+    }
+    if (t.pos) {
+      let pos = t.pos;
+      const posX = pos[0],
+        posY = pos[1];
+      let left = Math.round((posX / TV.width) * 100) + "%";
+      let top = Math.round((posY / TV.height) * 100) + "%";
+      if (multiline) {
+        top = Math.round((posY / TV.height) * 100 - 5) + "%";
+      }
+      pos_style.push("position:" + left);
+      pos_style.push("line:" + top);
+    }
   })
- 
+
 
   return pos_style.join(" ");
 }
 
 function _ecritureStyle(parse) {
   let style = ["STYLE"];
-    parse.styles.style.forEach((s) => {
-      s[0] = (styleToVtt[s[0]] && styleToVtt[s[0]]) || s[0];
-      style.push("::cue(." + s[0] + "){");
-      // style.push("font-size: " + s[2] + ";");
-      style.push("color: " + s[3].hexcolor() + ";");
-      style.push("}");
-    });
-    style.push("");
+  parse.styles.style.forEach((s) => {
+    s[0] = (styleToVtt[s[0]] && styleToVtt[s[0]]) || s[0];
+    style.push("::cue(." + s[0] + "){");
+    // style.push("font-size: " + s[2] + ";");
+    style.push("color: " + s[3].hexcolor() + ";");
+    style.push("}");
+  });
+  style.push("");
   return style;
 }
 
@@ -162,16 +162,18 @@ module.exports = {
       width: parse.info.PlayResX,
       height: parse.info.PlayResY,
     };
-   
-    
+
+
     let k = 0;
     let file_classic = ["WEBVTT\n"],
       file_a11y = ["WEBVTT\n"];
-      if (integrerStyle) {
-         let styles = _ecritureStyle(parse);
-        file_a11y = file_a11y.concat(styles);
-      }
+    if (integrerStyle) {
+      let styles = _ecritureStyle(parse);
+      file_a11y = file_a11y.concat(styles);
+    }
     let end_avant = "";
+    let nbOutVtt = 0;
+
     parse.events.dialogue.forEach((d, i) => {
       let Style = (styleToVtt[d.Style] && styleToVtt[d.Style]) || d.Style;
       let actor = (d.Name && "<v " + d.Name + ">") || "";
@@ -185,10 +187,11 @@ module.exports = {
       let txt = _quadratins(d.Text.raw);
       txt = _Ita(txt);
       txt = _accoladePos(txt);
-      if(styleOutVtt.indexOf(d.Style) !== -1 ||
-        styleOutVtt.indexOf(Style) !== -1){
-          nbOutVtt++;
-        }
+      if (styleOutVtt.indexOf(d.Style) !== -1 ||
+        styleOutVtt.indexOf(Style) !== -1) {
+        nbOutVtt++;
+        return;
+      }
       if (
         styleOutClassic.indexOf(d.Style) === -1 &&
         styleOutClassic.indexOf(Style) === -1
@@ -207,11 +210,6 @@ module.exports = {
           file_classic.splice(index_tc, 1, tc_classique);
           file_classic.splice(index_txt, 1, txt_avant);
           if (txt_avant.nbLigne() > 2) {
-            console.log(
-              erreurLigneClassic.findIndex(
-                (x) => x["sous-titre"] === file_classic[lf - 4]
-              )
-            );
             if (
               erreurLigneClassic.findIndex(
                 (x) => x["sous-titre"] === file_classic[lf - 4]
@@ -243,12 +241,13 @@ module.exports = {
       } else {
         k += 1;
       }
-      if(  styleOutVtt.indexOf(d.Style) === -1 &&
-        styleOutVtt.indexOf(Style) === -1){
-      file_a11y.push(i + 1-nbOutVtt);
-      file_a11y.push(TCposition);
-      file_a11y.push(actor + txt.styleA11Y(Style));
-      file_a11y.push("");}
+      if (styleOutVtt.indexOf(d.Style) === -1 &&
+        styleOutVtt.indexOf(Style) === -1) {
+        file_a11y.push(i + 1 - nbOutVtt);
+        file_a11y.push(TCposition);
+        file_a11y.push(actor + txt.styleA11Y(Style));
+        file_a11y.push("");
+      }
     });
 
     return {
