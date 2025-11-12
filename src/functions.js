@@ -14,7 +14,6 @@ const re_newline_tiret = /\\N-/g;
 const re_accolade_tiret = /\}-/g;
 const re_softbreak = /\\n/g; // There's no equivalent function in WebVTT.
 const re_hardspace = /\\h/g; // Replace with &nbsp;
-console.log('test');
 
 // prototype
 Number.prototype.toVTTtime = function () {
