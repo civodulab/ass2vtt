@@ -229,7 +229,7 @@ module.exports = {
                 styleItalicClassic.indexOf(Style) !== -1) &&
               txt.italique()) ||
             txt;
-          file_classic.push(i + 1 - k);
+          file_classic.push(i + 1 - k-nbOutVtt);
           file_classic.push(TCposition);
           file_classic.push(txt_clas);
           file_classic.push("");
